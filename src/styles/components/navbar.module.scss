@@ -1,0 +1,27 @@
+@use '../utils/functions' as *;
+
+.header {
+  grid-area: 1 / 1 / 2 / 4;
+
+  nav.header-nav {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2rem;
+  }
+
+  .header-nav ul {
+    list-style: none;
+    display: flex;
+    gap: 6rem;
+    margin: 0;
+    padding: 0;
+  }
+
+  .header-nav a {
+    text-decoration: none;
+    font-weight: bold;
+    color: black;
+  }
+}
