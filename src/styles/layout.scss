@@ -1,0 +1,15 @@
+body {
+  box-sizing: border-box;
+  min-height: 100svh;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(6, 1fr);
+  padding: 3rem;
+}
+
+.main {
+  grid-area: 2 / 1 / 7 / 4;
+  display: flex;
+  justify-content: center;
+}

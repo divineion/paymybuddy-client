@@ -1,0 +1,36 @@
+@use '../utils/functions' as *;
+@use '../utils/variables' as *;
+
+.form-container {
+  border: solid #000000 1px;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+  max-width: rem(500);
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  margin-bottom: 8rem;
+}
+
+button.btn {
+  font-weight: 700;
+  font-size: 1.5rem;
+}
+
+button.btn-warning {
+  color: #ffffff;
+  background: $warning;
+}
+
+.form-container input {
+  max-width: rem(295);
+  height: 4rem;
+}
+
+.input-wrapper {
+  height: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+}
