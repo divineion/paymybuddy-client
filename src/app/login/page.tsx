@@ -1,4 +1,9 @@
 import AuthForm from "@/components/Forms/AuthForm";
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+    title: 'Connexion',
+}
 
 const LoginPage = () => {
     return (
