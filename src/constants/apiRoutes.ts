@@ -1,5 +1,6 @@
 // USER ROUTES
 export const loginRoute = "http://localhost:8080/api/login_check";
+export const logoutRoute = "http://localhost:8080/api/logout";
 export const registerRoute = "http://localhost:8080/api/register";
 export const userRoute = (userId: number) => `http://localhost:8080/api/user/${userId}`;
 export const transferPageRoute = (userId: number) => `http://localhost:8080/api/user/${userId}/transfers`;
