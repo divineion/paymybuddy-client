@@ -3,7 +3,7 @@ import Link from "next/link";
 const Navbar = () => {
     return (
         <>
-            <nav className={"header-nav"}>
+            <nav className={"header-nav"} aria-label={"Menu principal"}>
                 <Link href={"/"}>Pay My Buddy</Link>
                 <ul>
                     <li><Link href={"/transfer"}>Transférer</Link></li>
