@@ -11,8 +11,8 @@ const Navbar = () => {
 
     return (
         <>
-            <nav className={"header-nav"}>
-                <Link className={"app-name"} href={"/"}>Pay My Buddy</Link>
+            <nav className={"header-nav"} aria-label={"Menu principal"}>
+                <Link href={"/"}>Pay My Buddy</Link>
                 <ul>
                     <li><Link href={"/transfer"}>Transférer</Link></li>
                     <li><Link href={"/profile"}>Profil</Link></li>
