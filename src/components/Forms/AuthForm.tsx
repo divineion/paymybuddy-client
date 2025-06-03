@@ -6,6 +6,7 @@ import {CustomError} from "@/services/types";
 import {useToast} from "@/contexts/ToastProvider";
 import { useRouter } from "next/navigation";
 import {frontLoginRoute, frontRegisterRoute, frontTransferRoute} from "@/constants/frontRoutes";
+import {userRegister} from "@/services/user";
 
 type AuthFormProps = {
     mode: "login" | "register";
@@ -32,25 +33,56 @@ const AuthForm = ({mode}: AuthFormProps) => {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        try {
-            const response = await login({
-                username: email,
-                password: password
-            });
 
-            if (response.isWellFormed()) {
-                toast({title: "Bienvenue", message: "Connexion réussie. Ravi de vous revoir !", variant: "success"})
+        if (mode === "login") {
+            try {
+                const response = await login({
+                    username: email,
+                    password: password
+                });
+
+                if (response.isWellFormed()) {
+                    toast({title: "Bienvenue", message: "Connexion réussie. Ravi de vous revoir !", variant: "success"})
+                }
+            } catch (error:  unknown) {
+                const err = error as CustomError;
+
+                if (err.status == 401) {
+                    toast({title: "Oops", message: "Veuillez vérifier votre email et votre mot de passe.", variant: "destructive"})
+                }
+
+                if (err.status == undefined) {
+                    toast({title: "Erreur", message: "Une erreur est survenue. Merci de réessayer plus tard.", variant: "destructive"})
+                }
             }
-        } catch (error:  unknown) {
-           const err = error as CustomError;
+        }
 
-           if (err.status == 401) {
-               toast({title: "Oops", message: "Veuillez vérifier votre email et votre mot de passe.", variant: "destructive"})
-           }
+        if (mode === "register") {
+            try {
+                const response = await userRegister({
+                    username: username,
+                    email: email,
+                    password: password
+                })
 
-           if (err.status == undefined) {
-               toast({title: "Erreur", message: "Une erreur est survenue. Merci de réessayer plus tard.", variant: "destructive"})
-           }
+                if (response) {
+                    toast({title: "Bienvenue", message: "Inscription réussie. Nous sommes ravis de vous accueillir !", variant: "success"})
+                    await login({
+                        username: email,
+                        password: password
+                    })
+                }
+            } catch (error: unknown) {
+                const err = error as CustomError;
+
+                if (err.status == 401) {
+                        toast({title: "Erreur", message: "Veuillez vérifier les informations saisies.", variant: "destructive"})
+                }
+
+                if (err.status == undefined) {
+                    toast({title: "Erreur", message: "Une erreur est survenue. Merci de réessayer plus tard.", variant: "destructive"})
+                }
+            }
         }
     }
 
@@ -90,9 +122,9 @@ const AuthForm = ({mode}: AuthFormProps) => {
                 <div className={"input-wrapper"}>
                     {mode === "register" && (
                         <input
-                            name={"username"}
-                            autoComplete={"username"}
-                            placeholder={"Username"}
+                            name={"Pseudo"}
+                            autoComplete={"nickname"}
+                            placeholder={"Pseudo"}
                             className={"form-control"}
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
@@ -100,7 +132,7 @@ const AuthForm = ({mode}: AuthFormProps) => {
                     )}
                     <input
                         name={"email"}
-                        placeholder={"Mail"}
+                        placeholder={"Adresse email"}
                         autoComplete={"email"}
                         type={"email"}
                         className={"form-control"}
