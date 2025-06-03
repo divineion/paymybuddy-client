@@ -51,7 +51,7 @@ const AuthForm = ({mode}: AuthFormProps) => {
                 className={styles["form-container"]}
                 onSubmit={handleSubmit} autoComplete={"on"}
             >
-                <button className={"btn btn-warning"}>Pay My Buddy</button>
+                <button className={"btn btn-app-name"}>Pay My Buddy</button>
                 <div className={"input-wrapper"}>
                     {mode === "register" && (
                         <input
