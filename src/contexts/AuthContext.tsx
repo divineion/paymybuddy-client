@@ -1,6 +1,6 @@
 "use client"; // pour le contexte côté client
 import React, { useState, createContext, useContext } from "react";
-import {userLogin, userLogout} from "@/services/user";
+import {isUserAuthenticated, userLogin, userLogout} from "@/services/user";
 import {useRouter} from "next/navigation";
 import { UserLogin} from "@/services/types";
 import {frontLoginRoute, frontTransferRoute} from "@/constants/frontRoutes";
@@ -10,6 +10,7 @@ type AuthContextType = {
     isLoggedIn: boolean;
     login: (credentials: UserLogin) => Promise<string>;
     logout: () => void;
+    authCheck: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -32,21 +33,35 @@ export const AuthProvider = ({children}: {children: React.ReactNode}) => {
             throw error;
         }
     };
+
+    const authCheck = async () => {
+        try {
+            const response = await isUserAuthenticated();
+
+            if (response === true) {
+                setIsLoggedIn(true);
+            }
+        } catch (error: unknown) {
+            setIsLoggedIn(false);
+            console.error("authentication check error:", error);
+        }
+    }
+
     const logout = async () => {
         try {
             await userLogout(); // attendre la promesse pour ne pas risquer une redirection avant que le token soit bien désactivé
             setIsLoggedIn(false);
             router.push(frontLoginRoute);
             toast({title: "Déconnexion", message: "Vous êtes déconnecté·e", variant:"success"})
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        } catch (error) {
+        } catch (error: unknown) {
             toast({title: "Erreur lors de la déconnexion", message: "Impossible de vous déconnecter. Veuillez réessayer " +
                     "dans quelques instants.", variant: "destructive"})
+            console.error("logout error:", error);
         }
     };
 
     return (
-        <AuthContext.Provider value={{isLoggedIn, login, logout}}>
+        <AuthContext.Provider value={{isLoggedIn, login, logout, authCheck}}>
             {children}
         </AuthContext.Provider>
     )
