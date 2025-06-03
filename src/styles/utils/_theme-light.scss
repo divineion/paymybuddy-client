@@ -1,0 +1,41 @@
+@use '../utils/variables-light' as light;
+
+body.theme-light {
+  background-color: light.$bg;
+  font: light.$text;
+
+  button.btn-app-name {
+    color:  light.$bg;
+    background: light.$accent-orange;
+    border-color: light.$border;
+  }
+
+  .header-nav a,
+  .header-nav__logout-button {
+    color: light.$text;
+  }
+
+  .header-nav a:hover,
+  .header-nav__logout-button:hover {
+    color: light.$accent-blue;
+  }
+
+  .toast {
+    &.destructive {
+      background-color: light.$error;
+    }
+
+    &.success {
+      background-color: light.$success;
+    }
+
+    &.info {
+      background-color: light.$primary;
+    }
+
+    &.warning {
+      background-color: light.$warning;
+    }
+  }
+
+}

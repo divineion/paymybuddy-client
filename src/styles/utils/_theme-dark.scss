@@ -1,0 +1,47 @@
+@use '../utils/variables-dark' as dark;
+
+body.theme-dark {
+  background: dark.$bg;
+  font: dark.$text;
+
+  button.btn-app-name {
+    color:  dark.$text;
+    background: dark.$bg-alt;
+    border-color: dark.$border;
+  }
+
+  .header-nav a,
+  .header-nav__logout-button {
+    color: dark.$text;
+  }
+
+  .header-nav :hover,
+  .header-nav__logout-button:hover {
+    color: dark.$primary;
+  }
+
+  .form-container {
+    background-color: dark.$bg-alt;
+    border: solid dark.$border 1px;
+    box-shadow: 0 4px 4px dark.$text;
+  }
+
+  .toast {
+    &.destructive {
+      background-color: dark.$error;
+    }
+
+    &.success {
+      background-color: dark.$success;
+    }
+
+    &.info {
+      background-color: dark.$primary;
+    }
+
+    &.warning {
+      background-color: dark.$warning;
+    }
+  }
+
+}
