@@ -1,9 +1,11 @@
 "use client";
 import styles from '../../styles/components/auth-form.module.scss';
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import {useAuth} from "@/contexts/AuthContext";
 import {CustomError} from "@/services/types";
 import {useToast} from "@/contexts/ToastProvider";
+import { useRouter } from "next/navigation";
+import {frontLoginRoute, frontRegisterRoute, frontTransferRoute} from "@/constants/frontRoutes";
 
 type AuthFormProps = {
     mode: "login" | "register";
@@ -13,7 +15,11 @@ const AuthForm = ({mode}: AuthFormProps) => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [username, setUsername] = useState("");
-    const {isLoggedIn, login} = useAuth();
+
+    const {isLoggedIn, login, authCheck} = useAuth();
+
+    const router = useRouter();
+
     const toast = useToast();
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -42,6 +48,14 @@ const AuthForm = ({mode}: AuthFormProps) => {
            }
         }
     }
+
+    useEffect(() => {
+        authCheck();
+        if (isLoggedIn) {
+            toast({title: "Bienvenue !", message: "Vous êtes déjà connecté·e", variant: "info"})
+            router.push(frontTransferRoute);
+        }
+    }, [isLoggedIn, router])
 
     return (
         !isLoggedIn &&
