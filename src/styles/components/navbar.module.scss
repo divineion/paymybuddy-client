@@ -1,5 +1,4 @@
 @use '../utils/functions' as *;
-@use '../utils/variables' as *;
 
 .header {
   grid-area: 1 / 1 / 2 / 4;
@@ -37,13 +36,11 @@
 .header-nav__logout-button {
   width: 10rem;
   text-decoration: none;
-  color: $text;
 }
 
-  .header-nav a:not(.app-name):hover,
+  .header-nav a:hover,
   .header-nav__logout-button:hover {
     font-variation-settings: "wght" 700;
-    color: $primary;
     transition: font-variation-settings 200ms, color 250ms;
   }
 }
