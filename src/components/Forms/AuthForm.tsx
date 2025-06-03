@@ -22,10 +22,16 @@ const AuthForm = ({mode}: AuthFormProps) => {
 
     const toast = useToast();
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        console.log("Form submitted");
-        e.preventDefault();
+    const buttonTitle = mode === "login"
+        ? "Accéder à la page d'inscription"
+        : "Accéder à la page de connexion";
 
+    const ariaLabel = mode === "login"
+        ? "Aller au formulaire d'inscription"
+        : "Aller au formulaire de connexion";
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
         try {
             const response = await login({
                 username: email,
@@ -35,10 +41,9 @@ const AuthForm = ({mode}: AuthFormProps) => {
             if (response.isWellFormed()) {
                 toast({title: "Bienvenue", message: "Connexion réussie. Ravi de vous revoir !", variant: "success"})
             }
-
         } catch (error:  unknown) {
-            console.log(error)
            const err = error as CustomError;
+
            if (err.status == 401) {
                toast({title: "Oops", message: "Veuillez vérifier votre email et votre mot de passe.", variant: "destructive"})
            }
@@ -46,6 +51,14 @@ const AuthForm = ({mode}: AuthFormProps) => {
            if (err.status == undefined) {
                toast({title: "Erreur", message: "Une erreur est survenue. Merci de réessayer plus tard.", variant: "destructive"})
            }
+        }
+    }
+
+    function handleAuthToggleButtonClick() {
+        if (mode == "login") {
+            router.push(frontRegisterRoute);
+        } else {
+            router.push(frontLoginRoute)
         }
     }
 
@@ -65,7 +78,15 @@ const AuthForm = ({mode}: AuthFormProps) => {
                 className={styles["form-container"]}
                 onSubmit={handleSubmit} autoComplete={"on"}
             >
-                <button className={"btn btn-app-name"}>Pay My Buddy</button>
+                <button
+                    className={"btn btn-app-name"}
+                    type={"button"}
+                    onClick={() => handleAuthToggleButtonClick()}
+                    title={buttonTitle}
+                    aria-label={ariaLabel}
+                >
+                    PayMyBuddy
+                </button>
                 <div className={"input-wrapper"}>
                     {mode === "register" && (
                         <input
