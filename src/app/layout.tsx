@@ -4,6 +4,9 @@ import {AuthProvider} from "@/contexts/AuthContext";
 import { Inter } from 'next/font/google';
 import {ToastProvider} from "@/contexts/ToastProvider";
 import type { Metadata } from 'next'
+import {ThemeProvider} from "@/contexts/ThemeContext";
+import ThemeSwitcher from "@/components/ThemeSwitcher/ThemeSwitcher";
+import React from "react";
 
 const inter = Inter({
     subsets: ['latin'],
@@ -28,13 +31,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr" className={inter.variable}>
-        <body>
-            <ToastProvider>
-                <AuthProvider>
-                    {children}
-                </AuthProvider>
-            </ToastProvider>
-        </body>
+        <ThemeProvider>
+            <body>
+                <ToastProvider>
+                    <AuthProvider>
+                        {children}
+                        <ThemeSwitcher/>
+                    </AuthProvider>
+                </ToastProvider>
+            </body>
+        </ThemeProvider>
     </html>
   );
 }
