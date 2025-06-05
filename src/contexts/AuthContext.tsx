@@ -2,23 +2,31 @@
 import React, { useState, createContext, useContext } from "react";
 import {isUserAuthenticated, userLogin, userLogout} from "@/services/user";
 import {useRouter} from "next/navigation";
-import { UserLogin} from "@/services/types";
+import {User, UserLogin} from "@/services/types";
 import {frontLoginRoute, frontTransferRoute} from "@/constants/frontRoutes";
 import {useToast} from "@/contexts/ToastProvider";
+import {isUser} from "@/helpers/typeGuards";
 
 type AuthContextType = {
+    user: User | null,
+    getUserId: () => number | null,
     isLoggedIn: boolean;
     login: (credentials: UserLogin) => Promise<string>;
     logout: () => void;
     authCheck: () => void;
+    loading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({children}: {children: React.ReactNode}) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [user, setUser] = useState<User | null>(null);
+    const [loading, setLoading] = useState(false);
     const router = useRouter();
     const toast = useToast();
+
+    const getUserId = () => user?.id ?? null;
 
     const login = async (credentials: UserLogin):Promise<string> => {
         try {
@@ -36,14 +44,19 @@ export const AuthProvider = ({children}: {children: React.ReactNode}) => {
 
     const authCheck = async () => {
         try {
-            const response = await isUserAuthenticated();
+            const userData = await isUserAuthenticated();
 
-            if (response === true) {
+            if (isUser(userData)) {
+                setLoading(true);
                 setIsLoggedIn(true);
+                setUser(userData)
             }
         } catch (error: unknown) {
             setIsLoggedIn(false);
+            setUser(null);
             console.error("authentication check error:", error);
+        } finally {
+            setLoading(false);
         }
     }
 
@@ -61,7 +74,7 @@ export const AuthProvider = ({children}: {children: React.ReactNode}) => {
     };
 
     return (
-        <AuthContext.Provider value={{isLoggedIn, login, logout, authCheck}}>
+        <AuthContext.Provider value={{isLoggedIn, login, logout, authCheck, user, loading, getUserId}}>
             {children}
         </AuthContext.Provider>
     )
