@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { TransferFormProps } from "@/services/types";
+import {Beneficiary, TransferRequest} from "@/services/types";
 
+export interface TransferFormProps {
+    beneficiaries: Beneficiary[];
+    onSubmit: (transferData: TransferRequest) => void;
+}
 const TransferForm: React.FC<TransferFormProps> = ({ beneficiaries, onSubmit }) => {
     const { getUserId, user } = useAuth();
 

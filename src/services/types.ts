@@ -27,21 +27,22 @@ export interface Beneficiary {
     username: string;
 }
 
-export interface Transfer {
+/**
+ * Represents a transfer from API.
+ * @property id - Unique identifier of the transfer
+ * @property sender - Sender user info ({@link Beneficiary})
+ * @property receiver - Receiver user info ({@link Beneficiary})
+ * @property description - Transfer description
+ * @property amount - Amount transferred (as string)
+ * @property date - date string of the transfer (YYYY-MM-DD HH:mm:ss)
+ */
+export interface TransferHistoryItem {
     id: number;
     sender: Beneficiary;
     receiver: Beneficiary;
     description: string;
     amount: string;
     date: string;
-}
-
-export interface TransferPage {
-    id: number;
-    beneficiaries: Beneficiary[];
-    balance: string;
-    sentTransfers: Transfer[];
-    receivedTransfers: Transfer[];
 }
 
 export interface EmailRequest {
@@ -65,9 +66,4 @@ export interface ApiResponse {
 export interface CustomError {
     status?: number;
     message?: string;
-}
-
-export interface TransferFormProps {
-    beneficiaries: Beneficiary[];
-    onSubmit: (transferData: TransferRequest) => void;
 }

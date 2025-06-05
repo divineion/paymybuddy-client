@@ -9,6 +9,13 @@ import {Beneficiary, TransferHistoryItem, TransferRequest} from "@/services/type
 import TransferForm from "@/components/Forms/TransferForm";
 import TransferHistory from "@/components/Transfer/TransferHistory";
 
+export interface TransferPage {
+    id: number;
+    beneficiaries: Beneficiary[];
+    balance: string;
+    sentTransfers: TransferHistoryItem[];
+    receivedTransfers: TransferHistoryItem[];
+}
 
 const Transfer = () => {
     const { isLoggedIn, authCheck, loading, getUserId } = useAuth();
