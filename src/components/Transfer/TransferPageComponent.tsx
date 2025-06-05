@@ -5,17 +5,27 @@ import { frontLoginRoute } from "@/constants/frontRoutes";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 import { fetchTransferPageInfo } from "@/services/user";
-import { TransferPage, TransferRequest } from "@/services/types";
+import {Beneficiary, TransferHistoryItem, TransferRequest} from "@/services/types";
 import TransferForm from "@/components/Forms/TransferForm";
+import TransferHistory from "@/components/Transfer/TransferHistory";
+
 
 const Transfer = () => {
     const { isLoggedIn, authCheck, loading, getUserId } = useAuth();
     const router = useRouter();
+
     const [transferPage, setTransferPage] = useState<TransferPage | null>(null);
+    const [transfersHistory, setTransfersHistory] = useState<TransferHistoryItem[]>([]); //initizliser avec tableau vide
 
     const userId = getUserId();
     const beneficiaries = transferPage?.beneficiaries;
     const balance = transferPage?.balance;
+
+    useEffect(() => {
+        if (transferPage?.receivedTransfers && transferPage.sentTransfers) {
+            setTransfersHistory([...transferPage.sentTransfers, ...transferPage.receivedTransfers]);
+        }
+    }, [transferPage]);
 
     useEffect(() => {
         authCheck();
@@ -47,6 +57,9 @@ const Transfer = () => {
                 <div>Chargement...</div>
             }
             <TransferForm beneficiaries={beneficiaries} onSubmit={handleSubmit} />
+            <TransferHistory
+                transfers={transfersHistory}
+            />
         </>
     );
 };
