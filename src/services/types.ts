@@ -1,10 +1,8 @@
-import bigDecimal from 'js-big-decimal';
-
 export interface User {
     id: number;
     username: string;
     email: string;
-    balance: bigDecimal;
+    balance: string;
 }
 
 export interface UserLogin {
@@ -19,10 +17,9 @@ export interface UserAccount {
 }
 
 export interface TransferRequest {
-    id: number;
     receiverId: number;
     description: string;
-    amount: bigDecimal;
+    amount: string;
 }
 
 export interface Beneficiary {
@@ -35,14 +32,14 @@ export interface Transfer {
     sender: Beneficiary;
     receiver: Beneficiary;
     description: string;
-    amount: bigDecimal;
+    amount: string;
     date: string;
 }
 
 export interface TransferPage {
     id: number;
     beneficiaries: Beneficiary[];
-    balance: bigDecimal;
+    balance: string;
     sentTransfers: Transfer[];
     receivedTransfers: Transfer[];
 }
@@ -68,4 +65,9 @@ export interface ApiResponse {
 export interface CustomError {
     status?: number;
     message?: string;
+}
+
+export interface TransferFormProps {
+    beneficiaries: Beneficiary[];
+    onSubmit: (transferData: TransferRequest) => void;
 }
