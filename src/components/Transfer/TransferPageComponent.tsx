@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { fetchTransferPageInfo } from "@/services/user";
 import {Beneficiary, TransferHistoryItem, TransferRequest} from "@/services/types";
 import TransferForm from "@/components/Forms/TransferForm";
-import TransferHistory from "@/components/Transfer/TransferHistory";
+import TransfersHistory from "@/components/Transfer/TransferHistory";
 
 export interface TransferPage {
     id: number;
@@ -17,7 +17,7 @@ export interface TransferPage {
     receivedTransfers: TransferHistoryItem[];
 }
 
-const Transfer = () => {
+const TransferPageComponent = () => {
     const { isLoggedIn, authCheck, loading, getUserId } = useAuth();
     const router = useRouter();
 
@@ -63,12 +63,15 @@ const Transfer = () => {
             { loading &&
                 <div>Chargement...</div>
             }
-            <TransferForm beneficiaries={beneficiaries} onSubmit={handleSubmit} />
-            <TransferHistory
+            <TransferForm
+                beneficiaries={beneficiaries}
+                onSubmit={handleSubmit}
+            />
+            <TransfersHistory
                 transfers={transfersHistory}
             />
         </>
     );
 };
 
-export default Transfer;
+export default TransferPageComponent;
