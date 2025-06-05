@@ -59,7 +59,7 @@ const TransferPageComponent = () => {
     };
 
     return (
-        <>
+        <div className={"transfer-page-container"}>
             { loading &&
                 <div>Chargement...</div>
             }
@@ -70,7 +70,7 @@ const TransferPageComponent = () => {
             <TransfersHistory
                 transfers={transfersHistory}
             />
-        </>
+        </div>
     );
 };
 
