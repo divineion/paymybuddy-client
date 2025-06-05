@@ -1,7 +1,13 @@
 import {UserAccount, UserLogin} from './types';
 import axios, { isAxiosError } from "axios";
 import "../constants/apiRoutes";
-import {loginRoute, logoutRoute, checkAuthenticationRoute, registerRoute} from "@/constants/apiRoutes";
+import {
+    loginRoute,
+    logoutRoute,
+    checkAuthenticationRoute,
+    registerRoute,
+    transferPageRoute
+} from "@/constants/apiRoutes";
 
 export const userLogin = async (userLogin: UserLogin) => {
     try {
@@ -66,6 +72,23 @@ export const userRegister = async (userAccount: UserAccount ) => {
         const response = await axios.post(registerRoute, userAccount, {
             withCredentials:true
         });
+
+        return response.data;
+    } catch (error: unknown) {
+        if (isAxiosError(error)) {
+            throw {
+                status: error.status,
+                message: error.message,
+            }
+        }
+    }
+}
+
+export const fetchTransferPageInfo = async (userId: number) => {
+    try {
+        const response = await axios.get(transferPageRoute(userId), {
+            withCredentials: true,
+        })
 
         return response.data;
     } catch (error: unknown) {
