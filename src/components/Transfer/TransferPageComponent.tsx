@@ -5,17 +5,34 @@ import { frontLoginRoute } from "@/constants/frontRoutes";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 import { fetchTransferPageInfo } from "@/services/user";
-import { TransferPage, TransferRequest } from "@/services/types";
+import {Beneficiary, TransferHistoryItem, TransferRequest} from "@/services/types";
 import TransferForm from "@/components/Forms/TransferForm";
+import TransfersHistory from "@/components/Transfer/TransferHistory";
 
-const Transfer = () => {
+export interface TransferPage {
+    id: number;
+    beneficiaries: Beneficiary[];
+    balance: string;
+    sentTransfers: TransferHistoryItem[];
+    receivedTransfers: TransferHistoryItem[];
+}
+
+const TransferPageComponent = () => {
     const { isLoggedIn, authCheck, loading, getUserId } = useAuth();
     const router = useRouter();
+
     const [transferPage, setTransferPage] = useState<TransferPage | null>(null);
+    const [transfersHistory, setTransfersHistory] = useState<TransferHistoryItem[]>([]); //initizliser avec tableau vide
 
     const userId = getUserId();
     const beneficiaries = transferPage?.beneficiaries;
     const balance = transferPage?.balance;
+
+    useEffect(() => {
+        if (transferPage?.receivedTransfers && transferPage.sentTransfers) {
+            setTransfersHistory([...transferPage.sentTransfers, ...transferPage.receivedTransfers]);
+        }
+    }, [transferPage]);
 
     useEffect(() => {
         authCheck();
@@ -42,13 +59,19 @@ const Transfer = () => {
     };
 
     return (
-        <>
+        <div className={"transfer-page-container"}>
             { loading &&
                 <div>Chargement...</div>
             }
-            <TransferForm beneficiaries={beneficiaries} onSubmit={handleSubmit} />
-        </>
+            <TransferForm
+                beneficiaries={beneficiaries}
+                onSubmit={handleSubmit}
+            />
+            <TransfersHistory
+                transfers={transfersHistory}
+            />
+        </div>
     );
 };
 
-export default Transfer;
+export default TransferPageComponent;
