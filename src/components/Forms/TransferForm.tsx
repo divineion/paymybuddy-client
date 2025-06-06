@@ -1,130 +1,189 @@
 import React, { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import {Beneficiary, TransferRequest} from "@/services/types";
+import {createTransfer} from "@/services/user";
+import {useToast} from "@/contexts/ToastProvider";
 
 export interface TransferFormProps {
     beneficiaries: Beneficiary[];
     onSubmit: (transferData: TransferRequest) => void;
 }
-const TransferForm: React.FC<TransferFormProps> = ({ beneficiaries, onSubmit }) => {
+const TransferForm: React.FC<TransferFormProps> = ({ beneficiaries }) => {
     const { getUserId, user } = useAuth();
+    const toast = useToast();
 
     const [selectedBeneficiary, setSelectedBeneficiary] = useState<number | "">("");
     const [description, setDescription] = useState("");
     const [amount, setAmount] = useState("");
     const [error, setError] = useState<string | null>(null);
 
+    const balance = typeof user?.balance === "string" ? parseFloat(user.balance) : user?.balance ?? 0;
+    const maxSentTransfer = balance / 1.05;
 
     const handleBeneficiarySelectOptionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const value = e.target.value;
         setSelectedBeneficiary(value === "" ? "" : Number(value));
+        if (value != "") setError(null);
     };
 
     const handleDescriptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setDescription(e.target.value);
+        const value = e.target.value;
+        setDescription(value);
+        if (value != "") setError(null);
     };
 
     const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setAmount(e.target.value);
     };
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-
+    const handleBeneficiarySelectBlur = () => {
         if (!selectedBeneficiary) {
             setError("Veuillez sélectionner un bénéficiaire.");
             return;
+        } else {
+            setError(null);
+        }
+    }
+
+    const handleDescriptionInputBlur = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+
+        if (value.length < 10 || value.length > 555) {
+            setError("La description doit être comprise entre 10 et 255 caractères");
+            setDescription(value);
+            return;
+        } else {
+            setDescription(value);
+        }
+    }
+
+    const handleAmountInputBlur = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+
+    //si le nombre n'est pas   valide, attendre la soumission pour valider ou retourner une erreur
+        const inputAmount = parseFloat(value);
+        if(isNaN(inputAmount)) {
+            setAmount(value);
+            setError(null);
+            return;
         }
 
-        if (!amount || Number(amount) <= 0) {
-            setError("Veuillez saisir un montant valide.");
-            return;
+        if (inputAmount > maxSentTransfer) {
+            setError(`Solde insuffisant : le montant maximum pour un transfert est de ${maxSentTransfer.toFixed(2)}`);
+        } else {
+            setError(null);
         }
-        if (!description) {
-            setError("Veuillez saisir une description valide.");
-            return;
-        }
+        setAmount(value);
+    }
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
 
         const sender = getUserId();
         if (!sender) {
             return;
         }
 
-        onSubmit({
-            receiverId: selectedBeneficiary,
-            description,
-            amount,
-        });
+        try {
+            await createTransfer({
+                id: sender,
+                receiverId: Number(selectedBeneficiary),
+                description,
+                amount
+            })
 
-        setSelectedBeneficiary("");
-        setDescription("");
-        setAmount("");
-        setError("")
+            const beneficiary = beneficiaries.find(b => b.id === selectedBeneficiary);
+            const username = beneficiary ? beneficiary.username : "";
+
+            toast({title: "Transfert effectué", message: `Le transfert a bien été envoyé à ${username}`, variant: "success"})
+
+            setTimeout( () => {
+                window.location.reload();
+            }, 5000);
+
+        } catch (error: unknown) {
+            console.error(error)
+            toast({title: "Erreur !", message: "Le transfert n'a pas pu aboutir.", variant: "destructive"})
+        }
     };
 
     return (
+        <>
         <form id="transferForm" className="transfer-form" onSubmit={handleSubmit}>
-            {error &&
-                <div
-                    role="alert"
-                    aria-live="polite"
-                    className="error-message"
+                <label
+                    htmlFor="beneficiary-select"
+                    className="sr-only"
                 >
-                    {error}
-                </div>}
-            <label
-                htmlFor="beneficiary-select"
-                className="sr-only"
-            >
-                Sélectionner une relation
-            </label>
-            <select
-                name="beneficiary"
-                id="beneficiary-select"
-                autoFocus
-                value={selectedBeneficiary}
-                onChange={handleBeneficiarySelectOptionChange}
-            >
-                <option value="">Sélectionner une relation</option>
-                {beneficiaries.map((b) => (
-                    <option key={b.id} value={b.id}>
-                        {b.username}
-                    </option>
-                ))}
-            </select>
-            <label
-                htmlFor={"transfer-description"}
-                className={"sr-only"}
-            >
-                Description du transfert
-            </label>
-            <input
-                type="text"
-                id={"transfer-description"}
-                name="description"
-                placeholder="Description"
-                value={description}
-                onChange={handleDescriptionChange}
-            />
-            <label
-                htmlFor={"transfer-amount"}
-                className={"sr-only"}
-            >
-                Montant du transfert
-            </label>
-            <input
-                type="number"
-                id={"transfer-amount"}
-                name="amount"
-                placeholder="0€"
-                min="0.01"
-                max={user?.balance}
-                step="0.01"
-                value={amount}
-                onChange={handleAmountChange}
-            />
-            <button type="submit">Payer</button>
-        </form>
+                    Sélectionner une relation
+                </label>
+                <select
+                    name="beneficiary"
+                    id="beneficiary-select"
+                    autoFocus
+                    value={selectedBeneficiary}
+                    onBlur={handleBeneficiarySelectBlur}
+                    onChange={handleBeneficiarySelectOptionChange}
+                >
+                    <option value="">Sélectionner une relation</option>
+                    {beneficiaries.map((b) => (
+                        <option key={b.id} value={b.id}>
+                            {b.username}
+                        </option>
+                    ))}
+                </select>
+                <label
+                    htmlFor={"transfer-description"}
+                    className={"sr-only"}
+                >
+                    Description du transfert
+                </label>
+                <input
+                    type="text"
+                    id={"transfer-description"}
+                    className={"transfer-form__transfer-description"}
+                    name="description"
+                    maxLength={255}
+                    minLength={10}
+                    placeholder="Description"
+                    value={description}
+                    onChange={handleDescriptionChange}
+                    onBlur={handleDescriptionInputBlur}
+                />
+                <label
+                    htmlFor={"transfer-amount"}
+                    className={"sr-only"}
+                >
+                    Montant du transfert
+                </label>
+                <input
+                    type="number"
+                    id={"transfer-amount"}
+                    className={"transfer-form__transfer-amount"}
+                    name="amount"
+                    placeholder="0€"
+                    min="1"
+                    max={maxSentTransfer.toFixed(2)}
+                    step="0.01"
+                    value={amount}
+                    onChange={handleAmountChange}
+                    onBlur={handleAmountInputBlur}
+                />
+                <button
+                    type="submit"
+                    className={"transfer-form__submit-button"}
+                >
+                    Payer
+                </button>
+            </form>
+                <div
+                    role={"alert"}
+                    aria-live={"polite"}
+                    className={`error-message ${error ? "visible" : ""}`}
+                >
+                    {error || "\u00A0"}
+                </div>
+
+        </>
     );
 };
 
