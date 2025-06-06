@@ -17,6 +17,7 @@ export interface UserAccount {
 }
 
 export interface TransferRequest {
+    id: number;
     receiverId: number;
     description: string;
     amount: string;

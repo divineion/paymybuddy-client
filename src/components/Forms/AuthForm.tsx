@@ -97,7 +97,6 @@ const AuthForm = ({mode}: AuthFormProps) => {
     useEffect(() => {
         authCheck();
         if (isLoggedIn) {
-            toast({title: "Bienvenue !", message: "Vous êtes déjà connecté·e", variant: "info"})
             router.push(frontTransferRoute);
         }
     }, [isLoggedIn, router])

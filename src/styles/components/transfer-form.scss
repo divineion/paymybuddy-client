@@ -1,0 +1,35 @@
+form.transfer-form {
+  display: grid;
+  grid-template-columns: 20rem 20rem 12rem 10rem;
+  grid-gap: 5rem;
+  width: 100%;
+  margin: 0 auto;
+  align-items: center;
+  justify-content: center;
+}
+
+form.transfer-form input,
+form.transfer-form select,
+form.transfer-form button {
+  border-radius: 0.5rem;
+  padding: 1rem;
+  font-size: 1.5rem;
+
+  &:focus-visible {
+    border-width: 4px;
+  }
+}
+
+.transfer-form__beneficiary-select,
+.transfer-form__transfer-description {
+  height: 5rem;
+}
+
+.transfer-form__transfer-amount {
+  height: 7.5rem;
+}
+
+.transfer-form__submit-button {
+  height: 5.5rem;
+}
+

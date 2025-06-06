@@ -62,5 +62,11 @@ body.theme-light {
     border-bottom: solid light.$border 1px;
   }
 
+  /* Transfer form */
+  // button
+  .transfer-form__submit-button {
+    background-color: light.$primary;
+    color: light.$text-white-soft;
+  }
 
 }
