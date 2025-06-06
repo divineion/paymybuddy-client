@@ -1,5 +1,5 @@
 "use client";
-import React, {createContext, useContext, useState} from "react";
+import React, {createContext, useContext, useEffect, useRef, useState} from "react";
 
 type ToastVariant = "default" | "destructive" | "success" | "info";
 
@@ -15,13 +15,23 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
     const [toast, setToast] = useState<ToastOptions | null>(null);
     const [visible, setVisible] = useState(false);
 
+    const toastRef = useRef<HTMLDivElement>(null);
+
+
+    // donne r le focu au toast dès son apparyition pour qu'il soit annoncé immédiatement par le lecteur d'écran
+    useEffect(() => {
+        if (visible && toast?.variant === "destructive" && toastRef.current) {
+            toastRef.current?.focus();
+        }
+    }, [visible, toast]);
+
     const showToast = (options: ToastOptions) => {
         setToast(options);
         setVisible(true);
 
         setTimeout(() => {
             setVisible(false);
-        }, 5000);
+        }, 10000);
     };
 
     return (
@@ -35,7 +45,10 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
                     role="alert"
                     aria-live="assertive"
                     aria-atomic="true"
-                    style={{ minWidth: "250px" }}
+                    style={{ minWidth: "250px"
+                }}
+                    ref={toastRef} //accéder au DOM pour le focus
+                    tabIndex={-1} //donner le focus au div sans qu’il soit accessible au tab normal
                 >
                     <div className="toast-header">
                         <strong className="me-auto">{toast.title}</strong>
