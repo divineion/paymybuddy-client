@@ -1,4 +1,4 @@
-import {UserAccount, UserLogin} from './types';
+import {TransferRequest, UserAccount, UserLogin} from './types';
 import axios, { isAxiosError } from "axios";
 import "../constants/apiRoutes";
 import {
@@ -6,7 +6,7 @@ import {
     logoutRoute,
     checkAuthenticationRoute,
     registerRoute,
-    transferPageRoute
+    transferPageRoute, transferRoute
 } from "@/constants/apiRoutes";
 
 export const userLogin = async (userLogin: UserLogin) => {
@@ -96,6 +96,23 @@ export const fetchTransferPageInfo = async (userId: number) => {
             throw {
                 status: error.status,
                 message: error.message,
+            }
+        }
+    }
+}
+
+export const createTransfer = async (transferData: TransferRequest) => {
+    try {
+        const response = await axios.post(transferRoute, transferData, {
+            withCredentials: true,
+        })
+
+        return response.data;
+    } catch(error: unknown) {
+        if (isAxiosError(error)) {
+            throw {
+                status: error.status,
+                message: error.message
             }
         }
     }
