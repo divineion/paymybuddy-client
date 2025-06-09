@@ -33,6 +33,7 @@ export const AuthProvider = ({children}: {children: React.ReactNode}) => {
             const response = await userLogin(credentials);
             if (response) {
                 setIsLoggedIn(true);
+                await authCheck();
                 router.push(frontTransferRoute);
             }
             return response;
