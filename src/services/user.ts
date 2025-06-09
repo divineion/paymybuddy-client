@@ -1,4 +1,4 @@
-import {EmailRequest, TransferRequest, UserAccount, UserLogin} from './types';
+import {EmailRequest, TransferRequest, UpdateUserAccount, UserAccount, UserLogin} from './types';
 import axios, { isAxiosError } from "axios";
 import "../constants/apiRoutes";
 import {
@@ -6,7 +6,11 @@ import {
     logoutRoute,
     checkAuthenticationRoute,
     registerRoute,
-    transferPageRoute, transferRoute, addRelationRoute
+    transferPageRoute,
+    transferRoute,
+    addRelationRoute,
+    changeUserInfoRoute,
+    userRoute
 } from "@/constants/apiRoutes";
 
 export const userLogin = async (userLogin: UserLogin) => {
@@ -130,6 +134,40 @@ export const addRelation = async (email: EmailRequest, userId: number) => {
             throw {
                 status: error.status,
                 message: error.message
+            }
+        }
+    }
+}
+
+export const fetchProfile = async (userId: number) => {
+    try {
+        const response = await axios.get(userRoute(userId), {
+            withCredentials: true,
+        })
+
+        return response.data;
+    }  catch (error) {
+        if (isAxiosError(error)) {
+            throw {
+                status: error.status,
+                message: error.message,
+            }
+        }
+    }
+}
+
+export const changeUserInfo = async (userId: number, emails: UpdateUserAccount) => {
+    try {
+        const response = await axios.patch(changeUserInfoRoute(userId), emails, {
+            withCredentials: true,
+        })
+
+        return response.data;
+    } catch(error) {
+        if (isAxiosError(error)) {
+            throw {
+                status: error.status,
+                message: error.message,
             }
         }
     }
