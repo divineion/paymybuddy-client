@@ -44,6 +44,8 @@ const AuthForm = ({mode}: AuthFormProps) => {
                 if (response.isWellFormed()) {
                     toast({title: "Bienvenue", message: "Connexion réussie. Ravi de vous revoir !", variant: "success"})
                 }
+
+                router.push(frontTransferRoute)
             } catch (error:  unknown) {
                 const err = error as CustomError;
 
@@ -99,7 +101,7 @@ const AuthForm = ({mode}: AuthFormProps) => {
         if (isLoggedIn) {
             router.push(frontTransferRoute);
         }
-    }, [isLoggedIn, router])
+    }, [isLoggedIn])
 
     return (
         !isLoggedIn &&
