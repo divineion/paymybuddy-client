@@ -17,7 +17,7 @@ const AddRelation = () => {
         authCheck();
     }, []);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleEmailInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setEmail(e.target.value);
     };
 
@@ -32,16 +32,16 @@ const AddRelation = () => {
         try {
             await addRelation({ email }, userId);
 
-            toast({title: "Relation ajoutée", message: "Relation ajoutée avec succès.", variant: "success"});
+            toast({title: "Relation ajoutée", message: `${email} : relation ajoutée avec succès.`, variant: "success"});
             setEmail("");
         } catch (error: unknown) {
-            console.error(error)
-            toast({title: "Erreur", message: "Erreur lors de l’ajout de la relation.", variant: "destructive"});
+            const message = error instanceof Error ? error.message : "Erreur lors de l’ajout de la relation.";
+            toast({title: "Erreur", message: `${email} : ${message}`, variant: "destructive"});
         }
     };
 
     return (
-        <form method="post" onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit}>
             <label htmlFor="add-relation-email-input" className="add-relation-email-label">
                 Chercher une relation
             </label>
@@ -50,7 +50,7 @@ const AddRelation = () => {
                 id="add-relation-email-input"
                 className="add-relation-email-input"
                 value={email}
-                onChange={handleChange}
+                onChange={handleEmailInputChange}
                 autoFocus
                 required
             />

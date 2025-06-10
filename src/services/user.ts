@@ -131,11 +131,23 @@ export const addRelation = async (email: EmailRequest, userId: number) => {
         return response.data;
     } catch (error) {
         if (isAxiosError(error)) {
-            throw {
-                status: error.status,
-                message: error.message
+            const status = error.response?.status;
+
+            if (status == 404) {
+                throw new Error("cette adresse email est inconnue.")
             }
+
+            if (status == 409) {
+                throw new Error("cet utilisateur fait déjà partie de vos relations.");
+            }
+
+            if (status == 400) {
+                throw new Error("vous ne pouvez pas ajouter votre propre compte en bénéficiaire.");
+            }
+
+            throw new Error("Erreur inconnue.");
         }
+        throw new Error("Erreur inconnue.");
     }
 }
 
