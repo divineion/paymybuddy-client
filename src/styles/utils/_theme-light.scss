@@ -69,4 +69,13 @@ body.theme-light {
     color: light.$text-white-soft;
   }
 
+  /* Profile form */
+  // edit button
+  .edit-button-svg {
+    fill: rgba(0, 0, 0, 0.90);
+  }
+
+  .email-input-error, .username-input-error, .password-input-error {
+    color: light.$error;
+  }
 }

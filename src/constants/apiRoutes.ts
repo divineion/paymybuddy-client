@@ -9,7 +9,7 @@ export const addRelationRoute = (userId: number) => `http://localhost:8080/api/u
 export const softDeleteRoute = (userId: number) => `http://localhost:8080/api/user/${userId}/delete-account`;
 export const removeRelationRoute = (userId: number, beneficiaryId: number) => `http://localhost:8080/api/user/${userId}/remove-relation/${beneficiaryId}`;
 export const changePasswordRoute = (userId: number) => `http://localhost:8080/api/user/${userId}/change-password`;
-export const changeEmailRoute = (userId: number) => `http://localhost:8080/api/user/${userId}/change-email`;
+export const changeUserInfoRoute = (userId: number) => `http://localhost:8080/api/user/${userId}/change-user-info`;
 
 // TRANSFER ROUTES
 export const transferRoute = "http://localhost:8080/api/transfer";

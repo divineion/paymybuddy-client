@@ -16,6 +16,12 @@ export interface UserAccount {
     password: string;
 }
 
+export interface UpdateUserAccount {
+    email: string;
+    currentPassword: string;
+    newPassword: string;
+}
+
 export interface TransferRequest {
     id: number;
     receiverId: number;
@@ -48,16 +54,6 @@ export interface TransferHistoryItem {
 
 export interface EmailRequest {
     email: string;
-}
-
-export interface ChangePassword {
-    oldPassword: string;
-    newPassword: string;
-}
-
-export interface ChangeEmail {
-    oldEmail: string;
-    newEmail: string;
 }
 
 export interface ApiResponse {

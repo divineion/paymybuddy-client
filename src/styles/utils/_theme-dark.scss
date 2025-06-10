@@ -61,4 +61,14 @@ body.theme-dark {
   .transfers-header-row {
     border-bottom: solid 1px dark.$border;
   }
+
+  /* Profile form */
+  // edit button
+  .edit-button-svg {
+    fill: dark.$border;
+  }
+
+  .email-input-error, .username-input-error, .password-input-error {
+    color: dark.$error;
+  }
 }

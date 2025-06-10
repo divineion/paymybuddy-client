@@ -1,0 +1,68 @@
+form.update-profile {
+  display: flex;
+  flex-direction: column;
+  max-height: 70svh;
+
+  button {
+    max-height: 4rem;
+  }
+}
+
+form.update-profile div.form-group {
+  display: flex;
+  flex-direction: column;
+
+  label {
+    width: 12rem;
+  }
+
+  > div {
+    display: flex;
+    flex-direction: row;
+  }
+}
+
+.update-profile__input-wrapper {
+  position: relative;
+  //width: 100%; // S'assure que le wrapper s'étend correctement
+
+  input {
+    width: 20rem;
+  }
+
+  .profile-password-input {
+    padding-right: 2.5rem; // Réserve l'espace pour le bouton
+    box-sizing: border-box;
+  }
+
+  button.show-password-toggle-button {
+    position: absolute;
+    top: 50%;
+    left: 18rem;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+  }
+}
+
+
+//.update-profile__input-wrapper input {
+//  max-height: fit-content;
+//}
+
+.update-profile .button-wrapper {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.update-profile__input-wrapper button {
+  background: transparent;
+  border:  none;
+  padding: 0;
+}
+
+.email-input-error, .username-input-error, .password-input-error {
+  margin: 0
+}
