@@ -146,11 +146,6 @@ const ProfileForm = () => {
         setNewEmail(e.target.value);
         setInitialEmail(e.target.value);
     };
-    useEffect(() => {
-        console.log("initialpassword ", initialPassword);
-        console.log("newPassword ", newPassword);
-    }, [initialPassword, newPassword, newEmail]);
-
 
     const handlePasswordInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setInitialPassword(e.target.value);
@@ -166,8 +161,6 @@ const ProfileForm = () => {
                     newPassword: newPassword || initialPassword,
                 });
 
-                console.log(response)
-
                 toast({
                     title: "Identifiants modifiés avec succès",
                     message: "Veuillez vous reconnecter",
@@ -178,7 +171,7 @@ const ProfileForm = () => {
                     logout();
                 }, 5000)
             } catch (error: unknown) {
-                console.log(error)
+                console.error(error)
             }
     }
 
