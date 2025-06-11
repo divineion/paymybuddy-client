@@ -1,0 +1,43 @@
+@use '../utils/functions' as *;
+@use '../utils/variables-dark' as *;
+@use '../utils/variables-light' as light;
+@use '../utils/variables-dark' as dark;
+
+.form-container {
+  max-width: rem(500);
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  margin-bottom: 8rem;
+
+  :global(body.theme-light) & {
+    background-color: light.$bg-alt;
+    border: solid light.$border 1px;
+    box-shadow: 0 4px 4px light.$shadow;
+  }
+
+  :global(body.theme-dark) & {
+    background-color: dark.$bg-alt;
+    border: solid dark.$border 1px;
+    box-shadow: 0 4px 4px dark.$shadow;
+  }
+}
+
+button.btn {
+  font-weight: 700;
+  font-size: 1.5rem;
+}
+
+.form-container input {
+  max-width: rem(295);
+  height: 4rem;
+}
+
+.input-wrapper {
+  height: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+}

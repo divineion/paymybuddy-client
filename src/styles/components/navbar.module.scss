@@ -1,0 +1,46 @@
+@use '../utils/functions' as *;
+
+.header {
+  grid-area: 1 / 1 / 2 / 4;
+
+  nav.header-nav {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2rem;
+    font-variation-settings: 'wght' 500;
+    font-size: 20px;
+  }
+
+  .header-nav__logout-button {
+    border: none;
+    background: none;
+    padding: 0;
+  }
+
+  .header-nav ul {
+    list-style: none;
+    display: flex;
+    gap: 6rem;
+    margin: 0;
+  }
+
+  .header-nav li {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+  }
+
+.header-nav a,
+.header-nav__logout-button {
+  width: 10rem;
+  text-decoration: none;
+}
+
+  .header-nav a:hover,
+  .header-nav__logout-button:hover {
+    font-variation-settings: "wght" 700;
+    transition: font-variation-settings 200ms, color 250ms;
+  }
+}

@@ -1,0 +1,81 @@
+@use '../utils/variables-dark' as dark;
+
+body.theme-dark {
+  background: dark.$bg;
+  font: dark.$text;
+
+  button.btn-app-name,
+  .add-relation-form button[type="submit"]{
+    color:  dark.$text;
+    background: dark.$bg-alt;
+    border-color: dark.$border;
+  }
+
+  .form-container {
+    background-color: dark.$bg-alt;
+    border: solid dark.$border 1px;
+    box-shadow: 0 4px 4px dark.$text;
+  }
+
+  /* header */
+  .header-nav a,
+  .header-nav__logout-button {
+    color: dark.$text;
+  }
+
+  .header-nav :hover,
+  .header-nav__logout-button:hover {
+    color: dark.$primary;
+  }
+
+  /* snackbar */
+  .toast {
+    &.destructive {
+      background-color: dark.$error;
+    }
+
+    &.success {
+      background-color: dark.$success;
+    }
+
+    &.info {
+      background-color: dark.$primary;
+    }
+
+    &.warning {
+      background-color: dark.$warning;
+    }
+  }
+
+  /* transfers table */
+  .transfers-card {
+    color: dark.$text;
+    border: solid 1px dark.$border;
+  }
+
+  .transfers-card,.transfers-header, .transfers-col {
+    background-color: dark.$bg-alt;
+    color: dark.$text;
+  }
+
+  .transfers-header-row {
+    border-bottom: solid 1px dark.$border;
+  }
+
+  /* Profile form */
+  // edit button
+  .edit-button-svg {
+    fill: dark.$border;
+  }
+
+  .email-input-error, .username-input-error, .password-input-error, .newpassword-input-error  {
+    color: dark.$error;
+  }
+
+  /* Add relation page */
+  .add-relation-form button[type="submit"] {
+    color:  dark.$text;
+    background: dark.$bg-alt;
+    border-color: dark.$border;
+  }
+}

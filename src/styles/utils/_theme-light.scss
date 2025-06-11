@@ -1,0 +1,93 @@
+@use '../utils/variables-light' as light;
+
+body.theme-light {
+  background-color: light.$bg;
+  font: light.$text;
+
+  button.btn-app-name {
+    color:  light.$bg;
+    background: light.$accent-orange;
+    border-color: light.$border;
+  }
+
+  .form-container {
+    background-color: light.$bg-alt;
+    border: solid light.$border 1px;
+    box-shadow: 0 4px 4px light.$text;
+  }
+
+  //header
+  .header-nav a,
+  .header-nav__logout-button {
+    color: light.$text;
+  }
+
+  .header-nav a:hover,
+  .header-nav__logout-button:hover {
+    color: light.$accent-blue;
+  }
+
+  //snackbar
+  .toast {
+    &.destructive {
+      background-color: light.$error;
+    }
+
+    &.success {
+      background-color: light.$success;
+      color: light.$text-white-soft
+    }
+
+    &.info {
+      background-color: light.$primary;
+    }
+
+    &.warning {
+      background-color: light.$accent-orange;
+    }
+  }
+
+  // transfers table
+  .transfers-card {
+    color: light.$text;
+    border: solid 1px light.$border;
+  }
+
+  .transfers-card,.transfers-header, .transfers-col {
+    background-color: transparent;
+    color: light.$text;
+  }
+
+  .transfers-header-row {
+    border-bottom: solid light.$border 1px;
+  }
+
+  /* Transfer form */
+  // button
+  .transfer-form__submit-button {
+    background-color: light.$primary;
+    color: light.$text;
+  }
+
+  /* Profile form */
+  // edit button
+  .edit-button-svg {
+    fill: rgba(0, 0, 0, 0.90);
+  }
+
+
+  .update-profile__input-wrapper  input {
+      background: transparent;
+  }
+
+  .email-input-error, .username-input-error, .password-input-error, .newpassword-input-error {
+    color: light.$error;
+  }
+
+  .add-relation-form button[type="submit"],
+  .button-wrapper button[type="submit"] {
+    color:  light.$bg;
+    background: light.$accent-orange;
+    border-color: light.$border;
+  }
+}

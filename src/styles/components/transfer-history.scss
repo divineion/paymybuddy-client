@@ -1,0 +1,33 @@
+/* Table container */
+.transfers-container {
+  min-height: max-content;
+}
+
+/* Table card */
+.transfers-card {
+  height: 100%;
+  border-radius: 8px;
+}
+
+/* Table card header */
+.transfers-header {
+  padding: 1.25rem 0 0 0.75rem;
+  background-color: transparent;
+  border-bottom: none;
+}
+
+.transfers-header,
+.transfers-header-row {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+/* Table body */
+.transfers-body {
+  padding-left: 0.25rem;
+}
+
+/* Table rows */
+.transfers-row:last-child {
+  border-bottom: transparent;
+}
