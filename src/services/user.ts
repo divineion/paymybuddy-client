@@ -1,5 +1,5 @@
 import {EmailRequest, TransferRequest, UpdateUserAccount, UserAccount, UserLogin} from './types';
-import axios, { isAxiosError } from "axios";
+import axios, {isAxiosError} from "axios";
 import "../constants/apiRoutes";
 import {
     loginRoute,
@@ -12,26 +12,39 @@ import {
     changeUserInfoRoute,
     userRoute
 } from "@/constants/apiRoutes";
+import {
+    ADD_RELATION_GENERIC_FAILURE_ERROR_MESSAGE,
+    EMAIL_ALREADY_EXISTS_MESSAGE,
+    FETCH_PROFILE_MESSAGE, FORBIDDEN_RESOURCE_ACCESS, FORBIDDEN_RESOURCE_UPDATE,
+    GENERIC_ERROR_MESSAGE,
+    GENERIC_REGISTRATION_ERROR_MESSAGE,
+    INSUFFICIENT_BALANCE_OR_AMOUNT_EXCEPTION,
+    INVALID_CREDENTIALS_MESSAGE,
+    LOGOUT_ERROR_MESSAGE,
+    PASSWORD_MISMATCH_ERROR,
+    RELATION_ALREADY_EXISTS_MESSAGE,
+    SELF_RELATION_ERROR,
+    UNKNOWN_EMAIL_ADDRESS,
+    USER_NOT_FOUND_MESSAGE
+} from "@/constants/toastMessages";
 
 export const userLogin = async (userLogin: UserLogin) => {
     try {
         const response = await axios.post(
             loginRoute, userLogin, {
-                withCredentials: true, //pour récup le cookie
+                withCredentials: true,
             });
 
         return response.data;
     } catch (error: unknown) {
         if (isAxiosError(error)) {
-            throw {
-                status: error.response?.status,
-                message: error.response?.data?.message,
+            if (error.status === 401) {
+                throw new Error(INVALID_CREDENTIALS_MESSAGE)
             }
+
+            throw new Error(GENERIC_ERROR_MESSAGE);
         }
-        throw  {
-            status: 500,
-            message: "Une erreur inattendue s'est produite."
-        }
+        throw new Error(GENERIC_ERROR_MESSAGE);
     }
 }
 
@@ -40,17 +53,11 @@ export const userLogout = async () => {
         await axios.post(logoutRoute, null, {
             withCredentials: true,
         });
-    } catch (error) {
+    } catch (error: unknown) {
         if (isAxiosError(error)) {
-            throw {
-                status: error.response?.status,
-                message: error.response?.data?.message,
-            }
+            throw new Error(LOGOUT_ERROR_MESSAGE)
         }
-        throw {
-            status: 500,
-            message: "Une erreur inattendue s'est produite."
-        }
+        throw new Error(GENERIC_ERROR_MESSAGE);
     }
 }
 
@@ -63,28 +70,34 @@ export const isUserAuthenticated = async () => {
         return response.data;
     } catch (error) {
         if (isAxiosError(error)) {
-            throw {
-                status: error.status,
-                message: error.message,
+            const status = error.response?.status;
+
+            if (status === 401) {
+                throw new Error(INVALID_CREDENTIALS_MESSAGE);
             }
+
+            throw new Error(GENERIC_ERROR_MESSAGE);
         }
+        throw new Error(GENERIC_ERROR_MESSAGE);
     }
 }
 
-export const userRegister = async (userAccount: UserAccount ) => {
+export const userRegister = async (userAccount: UserAccount) => {
     try {
         const response = await axios.post(registerRoute, userAccount, {
-            withCredentials:true
+            withCredentials: true
         });
 
         return response.data;
     } catch (error: unknown) {
         if (isAxiosError(error)) {
-            throw {
-                status: error.status,
-                message: error.message,
+            const status = error.response?.status;
+
+            if (status === 409) {
+                throw new Error(EMAIL_ALREADY_EXISTS_MESSAGE);
             }
         }
+        throw new Error(GENERIC_REGISTRATION_ERROR_MESSAGE);
     }
 }
 
@@ -97,11 +110,16 @@ export const fetchTransferPageInfo = async (userId: number) => {
         return response.data;
     } catch (error: unknown) {
         if (isAxiosError(error)) {
-            throw {
-                status: error.status,
-                message: error.message,
+            switch (error.response?.status) {
+                case 404:
+                    throw new Error(USER_NOT_FOUND_MESSAGE);
+                case 403:
+                    throw new Error(FORBIDDEN_RESOURCE_ACCESS);
+                default:
+                    throw new Error(GENERIC_REGISTRATION_ERROR_MESSAGE);
             }
         }
+        throw new Error(GENERIC_ERROR_MESSAGE);
     }
 }
 
@@ -112,13 +130,23 @@ export const createTransfer = async (transferData: TransferRequest) => {
         })
 
         return response.data;
-    } catch(error: unknown) {
+    } catch (error: unknown) {
         if (isAxiosError(error)) {
-            throw {
-                status: error.status,
-                message: error.message
+            switch (error.response?.status) {
+                case 404:
+                    throw new Error(USER_NOT_FOUND_MESSAGE);
+
+                case 403:
+                    throw new Error(FORBIDDEN_RESOURCE_UPDATE);
+
+                case 400:
+                    throw new Error(INSUFFICIENT_BALANCE_OR_AMOUNT_EXCEPTION);
+
+                default:
+                    throw new Error(GENERIC_ERROR_MESSAGE);
             }
         }
+        throw new Error(GENERIC_ERROR_MESSAGE);
     }
 }
 
@@ -133,21 +161,24 @@ export const addRelation = async (email: EmailRequest, userId: number) => {
         if (isAxiosError(error)) {
             const status = error.response?.status;
 
-            if (status == 404) {
-                throw new Error("cette adresse email est inconnue.")
-            }
+            switch (status) {
+                case 400:
+                    throw new Error(SELF_RELATION_ERROR);
 
-            if (status == 409) {
-                throw new Error("cet utilisateur fait déjà partie de vos relations.");
-            }
+                case 403:
+                    throw new Error(FORBIDDEN_RESOURCE_UPDATE);
 
-            if (status == 400) {
-                throw new Error("vous ne pouvez pas ajouter votre propre compte en bénéficiaire.");
-            }
+                case 404:
+                    throw new Error(UNKNOWN_EMAIL_ADDRESS);
 
-            throw new Error("Erreur inconnue.");
+                case 409:
+                    throw new Error(RELATION_ALREADY_EXISTS_MESSAGE);
+
+                default:
+                    throw new Error(ADD_RELATION_GENERIC_FAILURE_ERROR_MESSAGE);
+            }
         }
-        throw new Error("Erreur inconnue.");
+        throw new Error(GENERIC_ERROR_MESSAGE);
     }
 }
 
@@ -158,13 +189,21 @@ export const fetchProfile = async (userId: number) => {
         })
 
         return response.data;
-    }  catch (error) {
+    } catch (error) {
         if (isAxiosError(error)) {
-            throw {
-                status: error.status,
-                message: error.message,
+            const status = error.response?.status;
+            switch (status) {
+                case 403:
+                    throw new Error(FORBIDDEN_RESOURCE_ACCESS);
+
+                case 404 :
+                    throw new Error(USER_NOT_FOUND_MESSAGE);
+
+                default:
+                    throw new Error(FETCH_PROFILE_MESSAGE);
             }
         }
+        throw new Error(GENERIC_ERROR_MESSAGE);
     }
 }
 
@@ -175,12 +214,19 @@ export const changeUserInfo = async (userId: number, emails: UpdateUserAccount) 
         })
 
         return response.data;
-    } catch(error) {
+    } catch (error) {
         if (isAxiosError(error)) {
-            throw {
-                status: error.status,
-                message: error.message,
+            switch (error.response?.status) {
+                case 404:
+                    throw new Error(USER_NOT_FOUND_MESSAGE);
+
+                case 400:
+                    throw new Error(PASSWORD_MISMATCH_ERROR);
+
+                default:
+                    throw new Error(GENERIC_ERROR_MESSAGE);
             }
         }
+        throw new Error(GENERIC_ERROR_MESSAGE);
     }
 }
