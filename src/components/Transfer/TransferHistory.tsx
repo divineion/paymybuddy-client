@@ -61,7 +61,7 @@ const TransfersHistory: React.FC<TransfersHistoryProps> = ({transfers}) => {
                                             {transfer.description}
                                         </td>
                                         <td className="transfers-col transfers-col--amount">
-                                            {isReceived ? `${transfer.amount}€` : `- ${transfer.amount}€`}
+                                            {isReceived ? `+ ${transfer.amount}€` : `- ${transfer.amount}€`}
                                         </td>
                                     </tr>
                                 );
