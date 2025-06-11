@@ -4,8 +4,8 @@ body.theme-dark {
   background: dark.$bg;
   font: dark.$text;
 
-  /* Auth form */
-  button.btn-app-name {
+  button.btn-app-name,
+  .add-relation-form button[type="submit"]{
     color:  dark.$text;
     background: dark.$bg-alt;
     border-color: dark.$border;
@@ -68,7 +68,14 @@ body.theme-dark {
     fill: dark.$border;
   }
 
-  .email-input-error, .username-input-error, .password-input-error {
+  .email-input-error, .username-input-error, .password-input-error, .newpassword-input-error  {
     color: dark.$error;
+  }
+
+  /* Add relation page */
+  .add-relation-form button[type="submit"] {
+    color:  dark.$text;
+    background: dark.$bg-alt;
+    border-color: dark.$border;
   }
 }
