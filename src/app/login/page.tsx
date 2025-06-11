@@ -1,9 +1,9 @@
 import AuthForm from "@/components/Forms/AuthForm";
-import type { Metadata } from 'next'
+import {LOGIN_PAGE_TITLE} from "@/constants/titleTags";
 
-export const metadata: Metadata = {
-    title: 'Connexion',
-}
+export const metadata = {
+    title: LOGIN_PAGE_TITLE,
+};
 
 const LoginPage = () => {
     return (
