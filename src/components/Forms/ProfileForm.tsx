@@ -8,7 +8,7 @@ import {
     CREDENTIALS_UPDATE_SUCCESS_MESSAGE,
     CREDENTIALS_UPDATE_SUCCESS_TITLE,
     GENERIC_ERROR_MESSAGE,
-    GENERIC_ERROR_TITLE, NO_CHANGES_MESSAGE
+    GENERIC_ERROR_TITLE,
 } from "@/constants/toastMessages";
 import {EMAIL_REGEX, PASSWORD_REGEX} from "@/constants/regex";
 
@@ -16,7 +16,10 @@ const ProfileForm = () => {
     const {user, authCheck, isLoggedIn, logout} = useAuth();
     const toast = useToast();
 
-    const [error, setError] = useState("");
+    const [usernameError, setUsernameError] = useState("");
+    const [emailError, setEmailError] = useState("");
+    const [passwordError, setPasswordError] = useState("");
+    const [newPasswordError, setNewPasswordError] = useState("");
 
     const [username, setUsername] = useState('');
     const [initialEmail, setInitialEmail] = useState("");
@@ -51,13 +54,12 @@ const ProfileForm = () => {
             try {
                 if (userId && !onUsernameEdit && !onPasswordEdit && !onEmailEdit) {
                     const response = await fetchProfile(userId)
-                    // setstate même si la réponse est undefined
                     setInitialEmail(response.email || '');
                     setUsername(response.username || '');
                 }
             } catch (error: unknown) {
-                console.error(error);
-                setError("Echec lors du chargement du profil");
+                const message = error instanceof Error ? error.message : GENERIC_ERROR_MESSAGE;
+                toast({title: GENERIC_ERROR_TITLE, message: message, variant:"destructive"});
             }
         }
 
@@ -67,24 +69,24 @@ const ProfileForm = () => {
     const toggleOnUsernameEdit = (e: React.FormEvent) => {
         e.preventDefault();
         if (onUsernameEdit) {
-            setError("")
+            setUsernameError("")
             setOnUsernameEdit(false);
         } else {
             //ou activation du mode édition
-            setError("Pour modifier le nom d'utilisateur, veuillez consulter l'administrateur");
+            setUsernameError("Pour modifier le nom d'utilisateur, veuillez consulter l'administrateur");
             setOnUsernameEdit(true)
         }
     }
 
     const toggleOnEmailEdit = async (e: React.FormEvent) => {
         e.preventDefault();
-        // quitter le mode edition
         if (onEmailEdit && userId && newEmail) {
-            // //récup newEmail si saisie utilisateur,  sinon garder la valeur initiale
-            if (newEmail) {
+            if (newEmail && !EMAIL_REGEX.test(newEmail)) {
+                setEmailError("Le format de l'adresse e-mail est invalide")
                 setInitialEmail(newEmail.trim());
+            } else {
+                setEmailError("");
             }
-
             setOnEmailEdit(false);
         } else {
             //ou activation du mode édition
@@ -121,11 +123,14 @@ const ProfileForm = () => {
     const toggleOnNewPasswordEdit = (e: React.FormEvent) => {
         e.preventDefault()
         if (onNewPasswordEdit) {
+            if (newPassword && !PASSWORD_REGEX.test(newPassword)) {
+                setNewPasswordError("Le format du mot de passe est invalide.");
+            } else {
+                setNewPasswordError("");
+            }
+
             setOnNewPasswordEdit(false);
         } else {
-//            if (!newPassword  || newPassword.trim() === '') {
-                //setNewPassword(initialPassword);
-  //          }
             setOnEmailEdit(false);
             setOnUsernameEdit(false);
             setOnPasswordEdit(true);
@@ -137,13 +142,13 @@ const ProfileForm = () => {
         }
     }
 
-    const toggleShowPassword = (e: React.FormEvent<HTMLFormElement>) => {
+    const toggleShowPassword = (e: React.FormEvent<HTMLButtonElement>) => {
         e.preventDefault()
         setShowPassword(!showPassword);
         passwordInputRef.current?.focus();
     }
 
-    const toggleShowNewPassword = (e: React.FormEvent<HTMLFormElement>) => {
+    const toggleShowNewPassword = (e: React.FormEvent<HTMLButtonElement>) => {
         e.preventDefault();
         setShowNewPassword(!showNewPassword);
         newPasswordInputRef.current?.focus();
@@ -162,15 +167,15 @@ const ProfileForm = () => {
         e.preventDefault();
         if (userId)
             try {
-                const response = await changeUserInfo(userId, {
+                await changeUserInfo(userId, {
                     email: newEmail || initialEmail,
                     currentPassword: initialPassword,
                     newPassword: newPassword || initialPassword,
                 });
 
                 toast({
-                    title: "Identifiants modifiés avec succès",
-                    message: "Veuillez vous reconnecter",
+                    title: CREDENTIALS_UPDATE_SUCCESS_TITLE,
+                    message: CREDENTIALS_UPDATE_SUCCESS_MESSAGE,
                     variant: "success"
                 });
 
@@ -178,7 +183,8 @@ const ProfileForm = () => {
                     logout();
                 }, 5000)
             } catch (error: unknown) {
-                console.error(error)
+                const message = error instanceof Error ? error.message : GENERIC_ERROR_MESSAGE;
+                toast({ title: GENERIC_ERROR_TITLE, message: message, variant: "destructive"});
             }
     }
 
@@ -201,6 +207,8 @@ const ProfileForm = () => {
                                 ref={usernameInputRef}
                                 disabled={!onUsernameEdit}
                                 autoComplete={"off"}
+                                aria-describedby={onUsernameEdit ? "username-error" : undefined}
+                                aria-invalid={onUsernameEdit}
                             />
                             <button
                                 aria-label="En savoir plus sur le changement de nom d'utilisateur"
@@ -228,12 +236,16 @@ const ProfileForm = () => {
                             </button>
                         </div>
                     </div>
-                    <p className={
-                        onUsernameEdit ?
-                            "username-input-error visible"
-                            : "username-input-error invisible"
-                    }>
-                        Pour changer de nom d'utilisateur, veuillez contacter l'administrateur
+                    <p
+                        id="username-error"
+                        className={
+                            onUsernameEdit
+                                ? "username-input-error is-show"
+                                : "username-input-error is-hidden"
+                        }
+                        aria-live="polite"
+                    >
+                        Pour changer de nom d&apos;utilisateur, veuillez contacter l&apos;administrateur
                     </p>
                 </div>
 
@@ -254,6 +266,8 @@ const ProfileForm = () => {
                                 ref={emailInputRef}
                                 disabled={!onEmailEdit}
                                 onChange={handleEmailInputChange}
+                                aria-describedby="email-error"
+                                aria-invalid={!!emailError}
                                 required
                             />
                             <button
@@ -282,7 +296,13 @@ const ProfileForm = () => {
                             </button>
                         </div>
                     </div>
-                    <p className={"email-input-error"}>Email input error text</p>
+
+                        <p
+                            id="email-error"
+                            className={emailError ? "email-input-error is-show" : "email-input-error is-hidden"}
+                            role="alert"
+                            aria-live="assertive"
+                        >{emailError}</p>
                 </div>
 
                 <div className={"form-group"}>
@@ -303,6 +323,8 @@ const ProfileForm = () => {
                                 disabled={!onPasswordEdit}
                                 onChange={handlePasswordInputChange}
                                 required
+                                aria-describedby={onPasswordEdit ? undefined : "password-error"}
+                                aria-invalid={!onPasswordEdit}
                             />
                             <button
                                 aria-label={"Modifier votre mot de passe"}
@@ -336,7 +358,14 @@ const ProfileForm = () => {
                             </button>
                         </div>
                     </div>
-                    <p className={"password-input-error"}>Password input error text</p>
+                    <p
+                        id="password-error"
+                        role="alert"
+                        aria-live="assertive"
+                        className={passwordError ? "password-input-error is-show" : "password-input-error is-hidden"}
+                    >
+                        {passwordError}
+                    </p>
                 </div>
 
                 { onPasswordEdit &&
@@ -360,6 +389,8 @@ const ProfileForm = () => {
                                 disabled={!onNewPasswordEdit}
                                 onChange={e => setNewPassword(e.target.value)}
                                 aria-required="true"
+                                aria-describedby={onNewPasswordEdit ? undefined : "newpassword-error"}
+                                aria-invalid={!onNewPasswordEdit}
                             />
                             <button
                                 aria-label={"Saisir votre nouveau mot de passe"}
@@ -373,7 +404,7 @@ const ProfileForm = () => {
                                 onClick={toggleOnNewPasswordEdit}
                                 title={
                                     onNewPasswordEdit ?
-                                        "Valider votre nouveau mot de passe actuel"
+                                        "Valider votre nouveau mot de passe"
                                         : "Saisir votre mot de passe"
                                 }
                             >
@@ -393,11 +424,22 @@ const ProfileForm = () => {
                             </button>
                         </div>
                     </div>
+                    <p
+                        id="newpassword-error"
+                        role="alert"
+                        aria-live="assertive"
+                        className={newPasswordError ? "newpassword-input-error is-show" : "newpassword-input-error is-hidden"}
+                    >
+                        {newPasswordError}
+                    </p>
                 </div>
                 }
 
                 <div className={"button-wrapper"}>
-                    <button type={"submit"}>Modifier</button>
+                    <button
+                        type={"submit"}
+                        disabled={emailError || passwordError || newPasswordError}
+                    >Modifier</button>
                 </div>
             </form>
         </>
