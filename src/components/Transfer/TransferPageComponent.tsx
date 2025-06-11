@@ -5,9 +5,11 @@ import { frontLoginRoute } from "@/constants/frontRoutes";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 import { fetchTransferPageInfo } from "@/services/user";
-import {Beneficiary, TransferHistoryItem, TransferRequest} from "@/services/types";
+import {Beneficiary, TransferHistoryItem} from "@/services/types";
 import TransferForm from "@/components/Forms/TransferForm";
 import TransfersHistory from "@/components/Transfer/TransferHistory";
+import {useToast} from "@/contexts/ToastProvider";
+import {GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE} from "@/constants/toastMessages";
 
 export interface TransferPage {
     id: number;
@@ -18,15 +20,17 @@ export interface TransferPage {
 }
 
 const TransferPageComponent = () => {
-    const { isLoggedIn, authCheck, loading, getUserId } = useAuth();
+    const { isLoggedIn, authCheck, loading, user } = useAuth();
     const router = useRouter();
+    const toast = useToast();
 
     const [transferPage, setTransferPage] = useState<TransferPage | null>(null);
     const [transfersHistory, setTransfersHistory] = useState<TransferHistoryItem[]>([]); //initizliser avec tableau vide
 
-    const userId = getUserId();
     const beneficiaries = transferPage?.beneficiaries;
     const balance = transferPage?.balance;
+
+    const userId = user?.id;
 
     useEffect(() => {
         if (transferPage?.receivedTransfers && transferPage.sentTransfers) {
@@ -44,19 +48,25 @@ const TransferPageComponent = () => {
         }
     }, [loading, isLoggedIn]);
 
+    const fetchTransferPage = async (userId: number) => {
+        try {
+            const response = await fetchTransferPageInfo(userId);
+            setTransferPage(response);
+        } catch (error: unknown) {
+            const message = error instanceof Error ? error.message : GENERIC_ERROR_MESSAGE;
+            toast({title: GENERIC_ERROR_TITLE, message: message, variant: "destructive"});
+        }
+    }
+
     useEffect(() => {
         if (!loading && isLoggedIn && userId) {
-            fetchTransferPageInfo(userId).then(setTransferPage);
+            fetchTransferPage(userId);
         }
     }, [loading, isLoggedIn, userId]);
 
     if (!beneficiaries || balance === undefined) {
         return;
     }
-
-    const handleSubmit = (transferData: TransferRequest) => {
-        console.log("Form submitted with data:", transferData);
-    };
 
     return (
         <div className={"transfer-page-container"}>
@@ -65,7 +75,6 @@ const TransferPageComponent = () => {
             }
             <TransferForm
                 beneficiaries={beneficiaries}
-                onSubmit={handleSubmit}
             />
             <TransfersHistory
                 transfers={transfersHistory}

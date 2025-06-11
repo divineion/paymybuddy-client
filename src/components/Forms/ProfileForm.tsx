@@ -4,6 +4,13 @@ import {useAuth} from "@/contexts/AuthContext";
 import React, {useEffect, useRef, useState} from "react";
 import {changeUserInfo, fetchProfile} from "@/services/user";
 import {useToast} from "@/contexts/ToastProvider";
+import {
+    CREDENTIALS_UPDATE_SUCCESS_MESSAGE,
+    CREDENTIALS_UPDATE_SUCCESS_TITLE,
+    GENERIC_ERROR_MESSAGE,
+    GENERIC_ERROR_TITLE, NO_CHANGES_MESSAGE
+} from "@/constants/toastMessages";
+import {EMAIL_REGEX, PASSWORD_REGEX} from "@/constants/regex";
 
 const ProfileForm = () => {
     const {user, authCheck, isLoggedIn, logout} = useAuth();
