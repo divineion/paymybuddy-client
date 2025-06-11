@@ -11,11 +11,15 @@
 
 .error-message {
   color: red;
-  visibility: hidden;
+  opacity: 0;
   margin: 0 auto;
 }
 
-.error-message.visible {
-  visibility: visible;
-  transition: visibility 0.2s ease;
+.is-shown {
+  opacity: 1;
+  transition: opacity 0.2s ease;
+}
+
+.is-hidden {
+  opacity: 0;
 }

@@ -1,12 +1,17 @@
 import React, { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import {Beneficiary, TransferRequest} from "@/services/types";
+import {Beneficiary} from "@/services/types";
 import {createTransfer} from "@/services/user";
 import {useToast} from "@/contexts/ToastProvider";
+import {
+    GENERIC_ERROR_MESSAGE,
+    GENERIC_ERROR_TITLE,
+    TRANSFER_SUCCESS_MESSAGE,
+    TRANSFER_SUCCESS_TITLE
+} from "@/constants/toastMessages";
 
 export interface TransferFormProps {
     beneficiaries: Beneficiary[];
-    onSubmit: (transferData: TransferRequest) => void;
 }
 const TransferForm: React.FC<TransferFormProps> = ({ beneficiaries }) => {
     const { getUserId, user } = useAuth();
@@ -60,7 +65,6 @@ const TransferForm: React.FC<TransferFormProps> = ({ beneficiaries }) => {
     const handleAmountInputBlur = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
 
-    //si le nombre n'est pas   valide, attendre la soumission pour valider ou retourner une erreur
         const inputAmount = parseFloat(value);
         if(isNaN(inputAmount)) {
             setAmount(value);
@@ -95,15 +99,15 @@ const TransferForm: React.FC<TransferFormProps> = ({ beneficiaries }) => {
             const beneficiary = beneficiaries.find(b => b.id === selectedBeneficiary);
             const username = beneficiary ? beneficiary.username : "";
 
-            toast({title: "Transfert effectué", message: `Le transfert a bien été envoyé à ${username}`, variant: "success"})
+            toast({title: TRANSFER_SUCCESS_TITLE, message: TRANSFER_SUCCESS_MESSAGE(username), variant: "success"})
 
             setTimeout( () => {
                 window.location.reload();
             }, 5000);
 
         } catch (error: unknown) {
-            console.error(error)
-            toast({title: "Erreur !", message: "Le transfert n'a pas pu aboutir.", variant: "destructive"})
+            const message = error instanceof Error ? error.message : GENERIC_ERROR_MESSAGE;
+            toast({title: GENERIC_ERROR_TITLE, message: message, variant: "destructive"})
         }
     };
 
@@ -178,7 +182,7 @@ const TransferForm: React.FC<TransferFormProps> = ({ beneficiaries }) => {
                 <div
                     role={"alert"}
                     aria-live={"polite"}
-                    className={`error-message ${error ? "visible" : ""}`}
+                    className={`error-message ${error ? "is-shown" : ""}`}
                 >
                     {error || "\u00A0"}
                 </div>

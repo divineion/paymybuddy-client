@@ -4,7 +4,6 @@ body.theme-light {
   background-color: light.$bg;
   font: light.$text;
 
-  //auth form
   button.btn-app-name {
     color:  light.$bg;
     background: light.$accent-orange;
@@ -36,6 +35,7 @@ body.theme-light {
 
     &.success {
       background-color: light.$success;
+      color: light.$text-white-soft
     }
 
     &.info {
@@ -43,7 +43,7 @@ body.theme-light {
     }
 
     &.warning {
-      background-color: light.$warning;
+      background-color: light.$accent-orange;
     }
   }
 
@@ -66,7 +66,7 @@ body.theme-light {
   // button
   .transfer-form__submit-button {
     background-color: light.$primary;
-    color: light.$text-white-soft;
+    color: light.$text;
   }
 
   /* Profile form */
@@ -75,7 +75,19 @@ body.theme-light {
     fill: rgba(0, 0, 0, 0.90);
   }
 
-  .email-input-error, .username-input-error, .password-input-error {
+
+  .update-profile__input-wrapper  input {
+      background: transparent;
+  }
+
+  .email-input-error, .username-input-error, .password-input-error, .newpassword-input-error {
     color: light.$error;
+  }
+
+  .add-relation-form button[type="submit"],
+  .button-wrapper button[type="submit"] {
+    color:  light.$bg;
+    background: light.$accent-orange;
+    border-color: light.$border;
   }
 }

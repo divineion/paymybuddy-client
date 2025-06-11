@@ -6,6 +6,11 @@ import {User, UserLogin} from "@/services/types";
 import {frontLoginRoute, frontTransferRoute} from "@/constants/frontRoutes";
 import {useToast} from "@/contexts/ToastProvider";
 import {isUser} from "@/helpers/typeGuards";
+import {
+    GENERIC_ERROR_MESSAGE,
+    GENERIC_ERROR_TITLE, LOGOUT_SUCCESS_MESSAGE,
+    LOGOUT_SUCCESS_TITLE
+} from "@/constants/toastMessages";
 
 type AuthContextType = {
     user: User | null,
@@ -55,7 +60,6 @@ export const AuthProvider = ({children}: {children: React.ReactNode}) => {
         } catch (error: unknown) {
             setIsLoggedIn(false);
             setUser(null);
-            console.error("authentication check error:", error);
         } finally {
             setLoading(false);
         }
@@ -66,11 +70,10 @@ export const AuthProvider = ({children}: {children: React.ReactNode}) => {
             await userLogout(); // attendre la promesse pour ne pas risquer une redirection avant que le token soit bien désactivé
             setIsLoggedIn(false);
             router.push(frontLoginRoute);
-            toast({title: "Déconnexion", message: "Vous êtes déconnecté·e", variant:"success"})
+            toast({title: LOGOUT_SUCCESS_TITLE, message: LOGOUT_SUCCESS_MESSAGE, variant:"success"})
         } catch (error: unknown) {
-            toast({title: "Erreur lors de la déconnexion", message: "Impossible de vous déconnecter. Veuillez réessayer " +
-                    "dans quelques instants.", variant: "destructive"})
-            console.error("logout error:", error);
+            const message = error instanceof Error ? error.message : GENERIC_ERROR_MESSAGE;
+            toast({title: GENERIC_ERROR_TITLE, message: message, variant: "destructive"})
         }
     };
 

@@ -2,11 +2,16 @@
 import styles from '../../styles/components/auth-form.module.scss';
 import React, {useEffect, useState} from "react";
 import {useAuth} from "@/contexts/AuthContext";
-import {CustomError} from "@/services/types";
 import {useToast} from "@/contexts/ToastProvider";
-import { useRouter } from "next/navigation";
+import {useRouter} from "next/navigation";
 import {frontLoginRoute, frontRegisterRoute, frontTransferRoute} from "@/constants/frontRoutes";
 import {userRegister} from "@/services/user";
+import {
+    GENERIC_ERROR_TITLE,
+    GENERIC_LOGIN_ERROR_MESSAGE, GENERIC_REGISTRATION_ERROR_MESSAGE,
+    LOGIN_SUCCESS_MESSAGE,
+    LOGIN_SUCCESS_TITLE, REGISTRATION_SUCCESS_MESSAGE, REGISTRATION_SUCCESS_TITLE
+} from "@/constants/toastMessages";
 
 type AuthFormProps = {
     mode: "login" | "register";
@@ -41,21 +46,15 @@ const AuthForm = ({mode}: AuthFormProps) => {
                     password: password
                 });
 
-                if (response.isWellFormed()) {
-                    toast({title: "Bienvenue", message: "Connexion réussie. Ravi de vous revoir !", variant: "success"})
-                }
+                toast({title: LOGIN_SUCCESS_TITLE, message: LOGIN_SUCCESS_MESSAGE, variant: "success"})
 
                 router.push(frontTransferRoute)
-            } catch (error:  unknown) {
-                const err = error as CustomError;
+            } catch (error: unknown) {
+                const message = error instanceof Error ?
+                    error.message
+                    : GENERIC_LOGIN_ERROR_MESSAGE;
 
-                if (err.status == 401) {
-                    toast({title: "Oops", message: "Veuillez vérifier votre email et votre mot de passe.", variant: "destructive"})
-                }
-
-                if (err.status == undefined) {
-                    toast({title: "Erreur", message: "Une erreur est survenue. Merci de réessayer plus tard.", variant: "destructive"})
-                }
+                toast({title: GENERIC_ERROR_TITLE, message: `${message}`, variant: "destructive"})
             }
         }
 
@@ -68,22 +67,27 @@ const AuthForm = ({mode}: AuthFormProps) => {
                 })
 
                 if (response) {
-                    toast({title: "Bienvenue", message: "Inscription réussie. Nous sommes ravis de vous accueillir !", variant: "success"})
+                    toast({
+                        title: REGISTRATION_SUCCESS_TITLE,
+                        message: REGISTRATION_SUCCESS_MESSAGE,
+                        variant: "success"
+                    })
                     await login({
                         username: email,
                         password: password
                     })
                 }
             } catch (error: unknown) {
-                const err = error as CustomError;
+                const message = error instanceof Error ?
+                    error.message
+                    : GENERIC_REGISTRATION_ERROR_MESSAGE
 
-                if (err.status == 401) {
-                        toast({title: "Erreur", message: "Veuillez vérifier les informations saisies.", variant: "destructive"})
-                }
+                    toast({
+                        title: "Erreur",
+                        message: message,
+                        variant: "destructive"
+                    })
 
-                if (err.status == undefined) {
-                    toast({title: "Erreur", message: "Une erreur est survenue. Merci de réessayer plus tard.", variant: "destructive"})
-                }
             }
         }
     }
